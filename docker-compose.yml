@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  db-559210:
+    image: mysql:8.0
+    container_name: db-559210
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: springdb
+    ports:
+      - "3307:3306"
+    volumes:
+      - dbdata_559210:/var/lib/mysql
+    networks:
+      - rede_559210
+
+  api-559210:
+    build: .
+    container_name: api-559210
+    depends_on:
+      - db-559210
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db-559210:3306/springdb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    networks:
+      - rede_559210
+
+  adminer-559210:
+    image: adminer:latest
+    container_name: adminer-559210
+    restart: always
+    ports:
+      - "8081:8080"
+    networks:
+      - rede_559210
+
+volumes:
+  dbdata_559210:
+
+networks:
+  rede_559210:
+    driver: bridge
